@@ -1,0 +1,42 @@
+#!/bin/sh
+RETVAL=0
+
+start() {
+        /bin/mount -t proc proc /proc
+        /bin/mount -o remount,rw /
+        /bin/mount /dev/ubi0_5 -t ubifs /data
+        mkdir -p /data/etc/
+        mkdir -p /data/tmp/overlayfs
+        mount -t overlay -olowerdir=/etc,upperdir=/data/etc,workdir=/data/tmp/overlayfs overlay /etc
+        /bin/mkdir -p /dev/pts
+        /bin/mkdir -p /dev/shm
+        /bin/mount -a
+        /bin/hostname -F /etc/hostname
+        /bin/mount -t configfs none /sys/kernel/config
+        /bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+        /sbin/mdev -s
+}
+
+stop() {
+        echo "Nothing to do"
+}
+case "$1" in
+        start)
+                start
+                ;;
+        stop)
+                stop
+                ;;
+        status)
+                status $processname
+                RETVAL=$?
+                ;;
+        restart)
+                stop
+                start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|status|restart}"
+                ;;
+esac
+exit $RETVAL

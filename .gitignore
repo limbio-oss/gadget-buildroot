@@ -1,2 +1,7 @@
 output/
+gadget/board/nextthing/chippro/overlay/var/rsrv
+gadget/board/nextthing/chippro/overlay/opt/bin/rsrv
 .local-env
+.DS_Store
+server.key
+server.crt
